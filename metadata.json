@@ -1,0 +1,5 @@
+{
+  "name": "Personal Knowledge Graph Manager",
+  "description": "A full-stack application for managing and visualizing personal knowledge as an interactive graph. Connect notes with relationships, search through your knowledge base, and explore connections.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,61 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID from Firebase Auth" },
+        "email": { "type": "string", "format": "email", "description": "User's email address" },
+        "displayName": { "type": "string", "description": "User's display name" },
+        "photoURL": { "type": "string", "description": "User's profile picture URL" },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "User role" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Note": {
+      "title": "Note",
+      "description": "A knowledge note",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique note ID" },
+        "userId": { "type": "string", "description": "Owner's user ID" },
+        "title": { "type": "string", "description": "Title of the note" },
+        "content": { "type": "string", "description": "Content of the note (Markdown supported)" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "List of tags" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["userId", "title", "content"]
+    },
+    "Relationship": {
+      "title": "Relationship",
+      "description": "A connection between two notes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique relationship ID" },
+        "userId": { "type": "string", "description": "Owner's user ID" },
+        "sourceNoteId": { "type": "string", "description": "ID of the source note" },
+        "targetNoteId": { "type": "string", "description": "ID of the target note" },
+        "relationType": { "type": "string", "enum": ["depends_on", "related_to", "example_of", "part_of", "custom"], "description": "Type of relationship" },
+        "description": { "type": "string", "description": "Optional description of the relationship" }
+      },
+      "required": ["userId", "sourceNoteId", "targetNoteId", "relationType"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/notes/{noteId}": {
+      "schema": "Note",
+      "description": "Knowledge notes"
+    },
+    "/relationships/{relationshipId}": {
+      "schema": "Relationship",
+      "description": "Note relationships"
+    }
+  }
+}
