@@ -15,15 +15,18 @@ export default function Auth() {
     return () => unsubscribe();
   }, []);
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
   const handleLogin = async () => {
+    setAuthError(null);
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error: any) {
       console.error("Login failed:", error);
       if (error.code === 'auth/unauthorized-domain') {
-        alert(`Authentication failed: This domain (${window.location.hostname}) is not authorized in the Firebase Console. \n\nPlease add it to "Authorized domains" in your Firebase project settings.`);
+        setAuthError(`Domain "${window.location.hostname}" is not authorized in Firebase.`);
       } else {
-        alert(`Login failed: ${error.message}`);
+        setAuthError(error.message);
       }
     }
   };
@@ -63,12 +66,36 @@ export default function Auth() {
   }
 
   return (
-    <button
-      onClick={handleLogin}
-      className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
-    >
-      <LogIn className="w-4 h-4" />
-      <span>Sign in with Google</span>
-    </button>
+    <div className="flex flex-col items-center gap-4">
+      <button
+        onClick={handleLogin}
+        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+      >
+        <LogIn className="w-4 h-4" />
+        <span>Sign in with Google</span>
+      </button>
+
+      {authError && (
+        <div className="max-w-xs p-4 bg-red-50 border border-red-100 rounded-xl text-xs text-red-600 space-y-2">
+          <p className="font-bold">⚠️ {authError}</p>
+          {authError.includes('not authorized') && (
+            <div className="space-y-2">
+              <p>To fix this, go to your Firebase Console and add this domain to "Authorized domains":</p>
+              <div className="flex items-center gap-2 p-2 bg-white rounded border border-red-200 font-mono select-all">
+                {window.location.hostname}
+              </div>
+              <a 
+                href="https://console.firebase.google.com/project/gen-lang-client-0478851543/authentication/settings" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block text-center py-1.5 bg-red-600 text-white rounded font-bold hover:bg-red-700 transition-colors"
+              >
+                Open Firebase Console
+              </a>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
